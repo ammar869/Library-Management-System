@@ -1,7 +1,3 @@
-Sure! Here’s a more detailed README for your Library Management System project that highlights its features, architecture, usage, and potential improvements.
-
----
-
 # Library Management System
 
 A robust **Library Management System** developed in C++ to demonstrate practical application of Data Structures and Algorithms (DSA). This project manages books, users, and borrowing transactions using singly linked lists. It emphasizes clean code design, efficient algorithms, and persistent data storage.
