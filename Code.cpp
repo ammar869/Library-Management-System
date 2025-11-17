@@ -5,9 +5,6 @@
 #include <iomanip>
 using namespace std;
 
-// ===== STRUCTURES =====
-
-// Book structure for linked list
 struct Book {
     char isbn[20];
     char title[100];
@@ -16,7 +13,6 @@ struct Book {
     Book* next;
 };
 
-// User structure for linked list
 struct User {
     char userId[20];
     char name[50];
@@ -24,7 +20,6 @@ struct User {
     User* next;
 };
 
-// Transaction structure for linked list
 struct Transaction {
     char userId[20];
     char isbn[20];
@@ -34,28 +29,22 @@ struct Transaction {
     Transaction* next;
 };
 
-// ===== GLOBAL HEAD POINTERS =====
 Book* bookHead = nullptr;
 User* userHead = nullptr;
 Transaction* transactionHead = nullptr;
 
-// ===== UTILITY FUNCTIONS =====
-
-// Get current date as string "DD-MM-YYYY"
 void getCurrentDate(char* dateStr) {
     time_t now = time(0);
     tm* ltm = localtime(&now);
     sprintf(dateStr, "%02d-%02d-%04d", ltm->tm_mday, ltm->tm_mon + 1, 1900 + ltm->tm_year);
 }
 
-// Convert string to lowercase (for case-insensitive search)
 void toLowerCase(char* str) {
     for (int i = 0; str[i]; i++)
         if (str[i] >= 'A' && str[i] <= 'Z')
             str[i] += 32;
 }
 
-// Check if str contains substr (case-insensitive)
 bool containsSubstring(const char* str, const char* substr) {
     char tempStr[100], tempSubstr[100];
     strcpy(tempStr, str);
@@ -65,16 +54,11 @@ bool containsSubstring(const char* str, const char* substr) {
     return strstr(tempStr, tempSubstr) != nullptr;
 }
 
-// ===== BOOK MANAGEMENT =====
-
-// Add book to list
 void addBook() {
     Book* newBook = new Book;
     cout << "\nEnter ISBN: ";
     cin.ignore();
     cin.getline(newBook->isbn, 20);
-
-    // Check duplicate ISBN
     for (Book* temp = bookHead; temp != nullptr; temp = temp->next) {
         if (strcmp(temp->isbn, newBook->isbn) == 0) {
             cout << "Error: ISBN already exists.\n";
@@ -82,51 +66,41 @@ void addBook() {
             return;
         }
     }
-
     cout << "Enter Title: ";
     cin.getline(newBook->title, 100);
     cout << "Enter Author: ";
     cin.getline(newBook->author, 50);
-
     newBook->isAvailable = true;
     newBook->next = bookHead;
     bookHead = newBook;
-
     cout << "Book added successfully!\n";
 }
-// Swap data between two Book nodes (not pointers)
+
 void swapBookData(Book* a, Book* b) {
     char tempIsbn[20], tempTitle[100], tempAuthor[50];
     bool tempAvailable;
-
     strcpy(tempIsbn, a->isbn);
     strcpy(tempTitle, a->title);
     strcpy(tempAuthor, a->author);
     tempAvailable = a->isAvailable;
-
     strcpy(a->isbn, b->isbn);
     strcpy(a->title, b->title);
     strcpy(a->author, b->author);
     a->isAvailable = b->isAvailable;
-
     strcpy(b->isbn, tempIsbn);
     strcpy(b->title, tempTitle);
     strcpy(b->author, tempAuthor);
     b->isAvailable = tempAvailable;
 }
 
-
 void sortBooksByTitle() {
     if (!bookHead || !bookHead->next) return;
-
     bool swapped;
     Book* ptr1;
     Book* lptr = nullptr;
-
     do {
         swapped = false;
         ptr1 = bookHead;
-
         while (ptr1->next != lptr) {
             if (strcmp(ptr1->title, ptr1->next->title) > 0) {
                 swapBookData(ptr1, ptr1->next);
@@ -136,30 +110,25 @@ void sortBooksByTitle() {
         }
         lptr = ptr1;
     } while (swapped);
-
     cout << "Books sorted by Title successfully.\n";
 }
+
 void sortBooksByAuthor() {
     if (!bookHead || !bookHead->next) return;
-
     for (Book* i = bookHead; i != nullptr; i = i->next) {
         Book* minNode = i;
-
         for (Book* j = i->next; j != nullptr; j = j->next) {
             if (strcmp(j->author, minNode->author) < 0) {
                 minNode = j;
             }
         }
-
         if (minNode != i) {
             swapBookData(i, minNode);
         }
     }
-
     cout << "Books sorted by Author successfully.\n";
 }
 
-// Display all books
 void displayAllBooks() {
     if (!bookHead) {
         cout << "\nNo books available.\n";
@@ -175,13 +144,11 @@ void displayAllBooks() {
     }
 }
 
-// Search books by title (partial)
 void searchBookByTitle() {
     char searchTitle[100];
     cout << "\nEnter title to search: ";
     cin.ignore();
     cin.getline(searchTitle, 100);
-
     bool found = false;
     for (Book* temp = bookHead; temp != nullptr; temp = temp->next) {
         if (containsSubstring(temp->title, searchTitle)) {
@@ -194,13 +161,11 @@ void searchBookByTitle() {
     if (!found) cout << "No books found.\n";
 }
 
-// Delete a book by ISBN if available
 void deleteBook() {
     char isbn[20];
     cout << "\nEnter ISBN to delete: ";
     cin.ignore();
     cin.getline(isbn, 20);
-
     Book *temp = bookHead, *prev = nullptr;
     while (temp && strcmp(temp->isbn, isbn) != 0) {
         prev = temp;
@@ -218,20 +183,15 @@ void deleteBook() {
         bookHead = temp->next;
     else
         prev->next = temp->next;
-
     delete temp;
     cout << "Book deleted successfully.\n";
 }
 
-// ===== USER MANAGEMENT =====
-
-// Add user
 void addUser() {
     User* newUser = new User;
     cout << "\nEnter User ID: ";
     cin.ignore();
     cin.getline(newUser->userId, 20);
-
     for (User* temp = userHead; temp != nullptr; temp = temp->next) {
         if (strcmp(temp->userId, newUser->userId) == 0) {
             cout << "User ID already exists.\n";
@@ -239,19 +199,15 @@ void addUser() {
             return;
         }
     }
-
     cout << "Enter Name: ";
     cin.getline(newUser->name, 50);
     cout << "Enter Contact: ";
     cin.getline(newUser->contact, 15);
-
     newUser->next = userHead;
     userHead = newUser;
-
     cout << "User added successfully!\n";
 }
 
-// Display all users
 void displayAllUsers() {
     if (!userHead) {
         cout << "\nNo users registered.\n";
@@ -266,7 +222,6 @@ void displayAllUsers() {
     }
 }
 
-// Search user by ID (returns pointer)
 User* searchUserByID(const char* userId) {
     for (User* temp = userHead; temp != nullptr; temp = temp->next)
         if (strcmp(temp->userId, userId) == 0)
@@ -274,20 +229,17 @@ User* searchUserByID(const char* userId) {
     return nullptr;
 }
 
-// Delete user if no active borrowings
 void deleteUser() {
     char userId[20];
     cout << "\nEnter User ID to delete: ";
     cin.ignore();
     cin.getline(userId, 20);
-
     for (Transaction* t = transactionHead; t != nullptr; t = t->next) {
         if (strcmp(t->userId, userId) == 0 && !t->isReturned) {
             cout << "Cannot delete. User has borrowed books.\n";
             return;
         }
     }
-
     User *temp = userHead, *prev = nullptr;
     while (temp && strcmp(temp->userId, userId) != 0) {
         prev = temp;
@@ -301,14 +253,10 @@ void deleteUser() {
         userHead = temp->next;
     else
         prev->next = temp->next;
-
     delete temp;
     cout << "User deleted successfully.\n";
 }
 
-// ===== TRANSACTION MANAGEMENT =====
-
-// Borrow book
 void borrowBook() {
     char userId[20], isbn[20];
     cout << "\nEnter User ID: ";
@@ -331,7 +279,6 @@ void borrowBook() {
         cout << "Book already borrowed.\n";
         return;
     }
-
     Transaction* newTrans = new Transaction;
     strcpy(newTrans->userId, userId);
     strcpy(newTrans->isbn, isbn);
@@ -340,12 +287,10 @@ void borrowBook() {
     newTrans->isReturned = false;
     newTrans->next = transactionHead;
     transactionHead = newTrans;
-
     book->isAvailable = false;
     cout << "Book borrowed successfully.\n";
 }
 
-// Return book
 void returnBook() {
     char userId[20], isbn[20];
     cout << "\nEnter User ID: ";
@@ -353,7 +298,6 @@ void returnBook() {
     cin.getline(userId, 20);
     cout << "Enter Book ISBN: ";
     cin.getline(isbn, 20);
-
     Transaction* temp = transactionHead;
     while (temp) {
         if (strcmp(temp->userId, userId) == 0 && strcmp(temp->isbn, isbn) == 0 && !temp->isReturned)
@@ -364,18 +308,14 @@ void returnBook() {
         cout << "No active borrow record found.\n";
         return;
     }
-
     getCurrentDate(temp->returnDate);
     temp->isReturned = true;
-
     Book* book = bookHead;
     while (book && strcmp(book->isbn, isbn) != 0) book = book->next;
     if (book) book->isAvailable = true;
-
     cout << "Book returned successfully.\n";
 }
 
-// Display all transactions
 void displayAllTransactions() {
     if (!transactionHead) {
         cout << "\nNo transactions recorded.\n";
@@ -392,9 +332,6 @@ void displayAllTransactions() {
     }
 }
 
-// ===== FILE HANDLING =====
-
-// Generic function to save list data to file with a formatting function
 template<typename T>
 void saveToFile(const char* filename, T* head, void (*writeFunc)(ofstream&, T*)) {
     ofstream file(filename);
@@ -408,7 +345,6 @@ void saveToFile(const char* filename, T* head, void (*writeFunc)(ofstream&, T*))
     file.close();
 }
 
-// Write functions for each structure
 void writeBook(ofstream& file, Book* b) {
     file << b->isbn << "|" << b->title << "|" << b->author << "|" << b->isAvailable << "\n";
 }
@@ -421,7 +357,6 @@ void writeTransaction(ofstream& file, Transaction* t) {
     file << t->userId << "|" << t->isbn << "|" << t->borrowDate << "|" << t->returnDate << "|" << t->isReturned << "\n";
 }
 
-// Save all data
 void saveAllData() {
     saveToFile("books.txt", bookHead, writeBook);
     saveToFile("users.txt", userHead, writeUser);
@@ -429,12 +364,10 @@ void saveAllData() {
     cout << "All data saved.\n";
 }
 
-// Load data from file helper
 template<typename T>
 void loadFromFile(const char* filename, T** head, void (*readFunc)(char*, T**)) {
     ifstream file(filename);
     if (!file) return;
-
     char line[256];
     while (file.getline(line, 256)) {
         readFunc(line, head);
@@ -442,7 +375,6 @@ void loadFromFile(const char* filename, T** head, void (*readFunc)(char*, T**)) 
     file.close();
 }
 
-// Read functions for each structure
 void readBook(char* line, Book** head) {
     Book* newBook = new Book;
     char* token = strtok(line, "|");
@@ -453,7 +385,6 @@ void readBook(char* line, Book** head) {
     strcpy(newBook->author, token);
     token = strtok(NULL, "|");
     newBook->isAvailable = atoi(token);
-
     newBook->next = *head;
     *head = newBook;
 }
@@ -466,7 +397,6 @@ void readUser(char* line, User** head) {
     strcpy(newUser->name, token);
     token = strtok(NULL, "|");
     strcpy(newUser->contact, token);
-
     newUser->next = *head;
     *head = newUser;
 }
@@ -483,21 +413,15 @@ void readTransaction(char* line, Transaction** head) {
     strcpy(newTrans->returnDate, token);
     token = strtok(NULL, "|");
     newTrans->isReturned = atoi(token);
-
     newTrans->next = *head;
     *head = newTrans;
 }
 
-// Load all data
 void loadAllData() {
     loadFromFile("books.txt", &bookHead, readBook);
     loadFromFile("users.txt", &userHead, readUser);
     loadFromFile("transactions.txt", &transactionHead, readTransaction);
 }
-
-// ===== MENU FUNCTIONS =====
-
-
 
 void bookMenu() {
     int choice;
@@ -524,7 +448,6 @@ void bookMenu() {
         }
     } while (choice != 0);
 }
-
 
 void userMenu() {
     int choice;
@@ -556,10 +479,8 @@ void transactionMenu() {
     } while (choice != 0);
 }
 
-// ===== MAIN =====
 int main() {
     loadAllData();
-
     int choice;
     cout << "=== Library Management System ===\n";
     do {
@@ -577,8 +498,6 @@ int main() {
             default: cout << "Invalid choice.\n";
         }
     } while (choice != 0);
-
-    // Clean up memory
     while (bookHead) {
         Book* temp = bookHead;
         bookHead = bookHead->next;
@@ -594,6 +513,5 @@ int main() {
         transactionHead = transactionHead->next;
         delete temp;
     }
-
     return 0;
 }
